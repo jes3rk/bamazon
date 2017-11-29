@@ -17,13 +17,28 @@ con.connect(function(err) {
   console.log("Connected!");
 });
 
+// Actually does the shopping
 function shopper(id, quan) {
   // Ping the database for the product
   con.query("SELECT * FROM products WHERE item_id = " + id, function (err, result, fields) {
     if (err) throw err;
     // console.log(result[0].price);
-    if (result[0].stock_quantity > quantity) {
-
+    if (result[0].stock_quantity >= quan) {
+      var total = quan * result[0].price;
+      // Prompt to confirm
+      inquirer
+        .prompt([
+          {
+            type: "confirm",
+            message: "You would like to purchase " + quan + " units of " + result[0].product_name + " at $" + result[0].price + " for a total of $" + total + "?",
+            name: "purchase_confirm"
+          }
+        ]).then(function(inquirerResponse) {
+          console.log(inquirerResponse.purchase_confirm);
+          if (inquirerResponse.purchase_confirm) {
+            console.log("Thank you for your purchase")
+          }
+        });
     } else {
       console.log("I'm sorry, we don't have enough product in stock to complete your order.");
     };
@@ -68,9 +83,9 @@ inquirer
           ])
           .then(function(inquirerResponse) {
             var id = inquirerResponse.userInput;
-            var quantity = inquirerResponse.quantity;
+            var quantity = parseInt(inquirerResponse.quantity);
 
-
+            shopper(id, quantity);
           });
         break;
       default:
