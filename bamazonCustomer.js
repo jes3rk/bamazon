@@ -25,19 +25,28 @@ function shopper(id, quan) {
     // console.log(result[0].price);
     if (result[0].stock_quantity >= quan) {
       var total = quan * result[0].price;
+      var newQuan = result[0].stock_quantity - quan;
       // Prompt to confirm
       inquirer
         .prompt([
           {
             type: "confirm",
             message: "You would like to purchase " + quan + " units of " + result[0].product_name + " at $" + result[0].price + " for a total of $" + total + "?",
+            default: "true",
             name: "purchase_confirm"
           }
         ]).then(function(inquirerResponse) {
-          console.log(inquirerResponse.purchase_confirm);
+
+          // console.log(inquirerResponse.purchase_confirm);
+
           if (inquirerResponse.purchase_confirm) {
-            console.log("Thank you for your purchase")
-          }
+            // console.log("Thank you for your purchase")
+            con.query("UPDATE products SET stock_quantity = " + newQuan + " WHERE item_id = " + id, function(err, result, fields) {
+              console.log("Thank you for your purchase")
+            });
+          } else {
+           console.log("I'm sorry this wasn't what you were looking for.");
+          };
         });
     } else {
       console.log("I'm sorry, we don't have enough product in stock to complete your order.");
