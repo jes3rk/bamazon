@@ -17,6 +17,19 @@ con.connect(function(err) {
   console.log("Connected!");
 });
 
+function shopper(id, quan) {
+  // Ping the database for the product
+  con.query("SELECT * FROM products WHERE item_id = " + id, function (err, result, fields) {
+    if (err) throw err;
+    // console.log(result[0].price);
+    if (result[0].stock_quantity > quantity) {
+
+    } else {
+      console.log("I'm sorry, we don't have enough product in stock to complete your order.");
+    };
+  });
+};
+
 // Greeting
 console.log("Welcome to bamazon: your one stop shop for anything and everything!");
 
@@ -57,12 +70,7 @@ inquirer
             var id = inquirerResponse.userInput;
             var quantity = inquirerResponse.quantity;
 
-            // Ping the database for the product
-            con.query("SELECT * FROM products WHERE item_id = " + id, function (err, result, fields) {
-              if (err) throw err;
-              console.log(result[0].price);
-              // var p_name = result[0].
-            });
+
           });
         break;
       default:
