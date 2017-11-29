@@ -36,11 +36,7 @@ function shopper(id, quan) {
             name: "purchase_confirm"
           }
         ]).then(function(inquirerResponse) {
-
-          // console.log(inquirerResponse.purchase_confirm);
-
           if (inquirerResponse.purchase_confirm) {
-            // console.log("Thank you for your purchase")
             con.query("UPDATE products SET stock_quantity = " + newQuan + " WHERE item_id = " + id, function(err, result, fields) {
               console.log("Thank you for your purchase")
             });
@@ -73,6 +69,36 @@ inquirer
 
     switch (initial) {
       case "I would like to shop for a product!":
+        con.query("SELECT product_name, price FROM products", function(err, result, fields) {
+          if (err) throw err;
+          // console.log(result[2]);
+          var choiceArr = [];
+          for (var i = 0; i < result.length; i++) {
+            choiceArr.push(result[i].product_name + ", $" + result[i].price);
+          };
+          inquirer
+            .prompt([
+              {
+                type: "list",
+                message: "Which product would you like to purchase?",
+                choices: choiceArr,
+                name: "productChoice"
+              },
+              {
+                type: "input",
+                message: "And what quantity?",
+                name: "quantity_2"
+              }
+            ]).then(function(inquirerResponse) {
+              var choice = inquirerResponse.productChoice;
+
+              for (var i = 0; i < choiceArr.length; i++) {
+                if (choiceArr[i] === choice) {
+                  shopper(i + 1, inquirerResponse.quantity_2);
+                };
+              };
+            });
+        });
 
         break;
       case "I know what I want to buy, just let me buy.":
