@@ -7,7 +7,8 @@ var password = require("./password.js");
 var con = mysql.createConnection({
   host: "localhost",
   user: "root",
-  password: password
+  password: password,
+  database: "bamazon_db"
 });
 
 // Connection test
@@ -33,7 +34,7 @@ inquirer
 
     var initial = inquirerResponse.initialPrompt;
 
-    switch (intial) {
+    switch (initial) {
       case "I would like to shop for a product!":
 
         break;
@@ -45,18 +46,22 @@ inquirer
               type: "input",
               message: "Please enter the product ID of the product you would like to purchase.",
               name: "userInput"
+            },
+            {
+              type: "input",
+              message: "And what quantity?",
+              name: "quantity"
             }
           ])
           .then(function(inquirerResponse) {
             var id = inquirerResponse.userInput;
+            var quantity = inquirerResponse.quantity;
 
             // Ping the database for the product
-            con.connect(function(err) {
+            con.query("SELECT * FROM products WHERE item_id = " + id, function (err, result, fields) {
               if (err) throw err;
-              con.query("SELECT * FROM customers WHERE item_id = " + id, function (err, result, fields) {
-                if (err) throw err;
-                console.log(result);
-              });
+              console.log(result[0].price);
+              // var p_name = result[0].
             });
           });
         break;
