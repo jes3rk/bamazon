@@ -28,7 +28,7 @@ function mainMenu() {
         name: "firstChoice"
       }
     ]).then(function(inquirerResponse) {
-      switch (inquirerResponse) {
+      switch (inquirerResponse.firstChoice) {
         case "View Department Sales":
 
           break;
