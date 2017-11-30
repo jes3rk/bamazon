@@ -6,6 +6,7 @@ var password = require("./password.js");
 // Make the connection
 var con = mysql.createConnection({
   host: "localhost",
+  port: 3306,
   user: "root",
   password: password,
   database: "bamazon_db"
@@ -37,7 +38,7 @@ function shopper(id, quan) {
           }
         ]).then(function(inquirerResponse) {
           if (inquirerResponse.purchase_confirm) {
-            con.query("UPDATE products SET stock_quantity = " + newQuan + " WHERE item_id = " + id, function(err, result, fields) {
+            con.query("UPDATE products SET stock_quantity = " + newQuan + " WHERE item_id = " + id + ";", function(err, result, fields) {
               console.log("Thank you for your purchase")
             });
           } else {
@@ -69,7 +70,7 @@ inquirer
 
     switch (initial) {
       case "I would like to shop for a product!":
-        con.query("SELECT product_name, price FROM products", function(err, result, fields) {
+        con.query("SELECT product_name, price FROM products;", function(err, result, fields) {
           if (err) throw err;
           var choiceArr = [];
           for (var i = 0; i < result.length; i++) {
