@@ -9,6 +9,7 @@ CREATE TABLE products(
     department_name VARCHAR(30) NOT NULL,
     price FLOAT(10) NOT NULL,
     stock_quantity INTEGER(10) NOT NULL,
+	product_sales FLOAT(10) DEFAULT 0,
     PRIMARY KEY (item_id)
 );
 
@@ -25,5 +26,20 @@ INSERT INTO products (product_name, department_name, price, stock_quantity)
         ("Literally a Leaf", "Outdoors", .99, 22000),
         ("Action Barbie Joe", "Children", 39.99, 1200);
 
+CREATE TABLE departments(
+	department_id INTEGER(10) AUTO_INCREMENT NOT NULL,
+    department_name VARCHAR(30) NOT NULL,
+    over_head_costs FLOAT(10) NOT NULL,
+    total_profit FLOAT(10),
+    PRIMARY KEY (department_id)
+);
 
+INSERT INTO departments (department_name, over_head_costs)
+	VALUE
+		("Electronics", 10000),
+        ("Witch Arts & Crafts", 8000),
+        ("Children", 9500),
+        ("Home Essentials", 12500),
+        ("Outdoors", 5640);
+        
 SELECT * FROM products;

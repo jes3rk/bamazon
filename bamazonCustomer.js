@@ -27,6 +27,7 @@ function shopper(id, quan) {
     if (result[0].stock_quantity >= quan) {
       var total = quan * result[0].price;
       var newQuan = result[0].stock_quantity - quan;
+      var dept_name = result[0].department_name;
       // Prompt to confirm
       inquirer
         .prompt([
@@ -39,7 +40,12 @@ function shopper(id, quan) {
         ]).then(function(inquirerResponse) {
           if (inquirerResponse.purchase_confirm) {
             con.query("UPDATE products SET stock_quantity = " + newQuan + " WHERE item_id = " + id + ";", function(err, result, fields) {
-              console.log("Thank you for your purchase")
+              if (err) throw err;
+              console.log("Thank you for your purchase");
+            });
+            // Update the department sales
+            con.query("UPDATE products SET product_sales = product_sales + " + total + " WHERE item_id = " + id + ";", function(err, result, fields) {
+              if (err) throw err;
             });
           } else {
            console.log("I'm sorry this wasn't what you were looking for.");
