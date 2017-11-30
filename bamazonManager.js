@@ -17,6 +17,24 @@ con.connect(function(err) {
   console.log("Connected!");
 });
 
+function returnMain() {
+  inquirer
+    .prompt([
+      {
+        type: "confirm",
+        message: "Would you like to return to the main menu?",
+        default: "true",
+        name: "menu_confirm"
+      }
+    ]).then(function(inquirerResponse) {
+      if (inquirerResponse.menu_confirm) {
+        mainMenu();
+      } else {
+        console.log("Bye bye!");
+      };
+    });
+};
+
 // Main menu inquirer
 function mainMenu() {
   inquirer
@@ -30,10 +48,26 @@ function mainMenu() {
     ]).then(function(inquirerResponse) {
         switch (inquirerResponse.manage_choice) {
           case "View Products for Sale":
-
+            con.query("SELECT * FROM products", function(err, result, fields) {
+              if (err) throw err;
+              for (var i = 0; i < result.length; i++) {
+                console.log(result[i]);
+              };
+              returnMain();
+            });
             break;
           case "View Low Inventory":
-
+            con.query("SELECT * FROM products WHERE stock_quantity <= 100", function(err, result, fields) {
+              if (err) throw err;
+              if (result.length > 1) {
+                for (var i = 0; i < result.length; i++) {
+                  console.log(result[i]);
+                };
+              } else {
+                console.log("There are no products with low inventory.");
+                returnMain();
+              };
+            });
             break;
           case "Add to Inventory":
 
@@ -46,3 +80,5 @@ function mainMenu() {
         };
     });
 };
+
+mainMenu();

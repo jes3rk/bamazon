@@ -71,7 +71,6 @@ inquirer
       case "I would like to shop for a product!":
         con.query("SELECT product_name, price FROM products", function(err, result, fields) {
           if (err) throw err;
-          // console.log(result[2]);
           var choiceArr = [];
           for (var i = 0; i < result.length; i++) {
             choiceArr.push(result[i].product_name + ", $" + result[i].price);
