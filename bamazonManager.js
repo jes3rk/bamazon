@@ -71,7 +71,71 @@ function mainMenu() {
             });
             break;
           case "Add to Inventory":
-
+            inquirer
+              .prompt([
+                {
+                  type: "list",
+                  message: "Select itme to re-stock:",
+                  choices: ["by product name", "by item id"],
+                  name: "add_choice"
+                }
+              ]).then(function(inquirerResponse) {
+                switch (inquirerResponse.add_choice) {
+                  case "by product name":
+                    con.query("SELECT product_name FROM products", function(err, result, fields) {
+                      if (err) throw err;
+                      var choices = [];
+                      for (var i = 0; i < result.length; i++) {
+                        choices.push(result[i].product_name);
+                      };
+                      inquirer
+                        .prompt([
+                          {
+                            type: "list",
+                            message: "Please select a product",
+                            choices: choices,
+                            name: "choice"
+                          },
+                          {
+                            type: "input",
+                            message: "How many units would you like to add?",
+                            name: "additional"
+                          }
+                        ]).then(function(inquirerResponse) {
+                          for (var i = 0; i < choices.length; i++) {
+                            if (choices[i] === inquirerResponse.choice) {
+                              var id = i + 1;
+                              con.query("UPDATE products SET stock_quantity = stock_quantity + " + parseInt(inquirerResponse.additional) + " WHERE item_id = " + id + ";", function(err, result, fields) {
+                                console.log("Successfully added product");
+                                returnMain();
+                              });
+                            };
+                          };
+                        });
+                    });
+                    break;
+                  case "by item id":
+                    inquirer
+                      .prompt([
+                        {
+                          type: "input",
+                          message: "Please type the item id of the item you wish to re-stock",
+                          name: "id"
+                        },
+                        {
+                          type: "input",
+                          message: "How many units would you like to add?",
+                          name: "additional"
+                        }
+                      ]).then(function(inquirerResponse) {
+                        con.query("UPDATE products SET stock_quantity = stock_quantity + " + parseInt(inquirerResponse.additional) + " WHERE item_id = " + parseInt(inquirerResponse.id) + ";", function(err, result, fields) {
+                          console.log("Successfully added product");
+                          returnMain();
+                        });
+                      });
+                    break;
+                };
+              });
             break;
           case "Add New Product":
             inquirer
