@@ -20,8 +20,8 @@ INSERT INTO products (product_name, department_name, price, stock_quantity)
         ("My First Car", "Children", 19.99, 12000),
         ("Generic Brand Beer", "Home Essentials", 12.99, 8500),
         ("Rope... The Best Rope", "Outdoors", 59.99, 1250),
-        ("HiPod", "Electonics", 299.99, 5560),
-        ("My Little Cauldron", "Witch Arts and Crafts", 15.99, 2200),
+        ("HiPod", "Electronics", 299.99, 5560),
+        ("My Little Cauldron", "Witch Arts & Crafts", 15.99, 2200),
         ("Everything but the Kitchen Sink", "Home Essentials", 155.99, 3640),
         ("Literally a Leaf", "Outdoors", .99, 22000),
         ("Action Barbie Joe", "Children", 39.99, 1200);
@@ -42,4 +42,10 @@ INSERT INTO departments (department_name, over_head_costs)
         ("Home Essentials", 12500),
         ("Outdoors", 5640);
         
-SELECT * FROM products;
+
+
+
+SELECT departments.*,  products.product_sales FROM departments
+	INNER JOIN products ON products.department_name = departments.department_name
+    GROUP BY department_id;
+
