@@ -76,7 +76,7 @@ inquirer
 
     switch (initial) {
       case "I would like to shop for a product!":
-        con.query("SELECT product_name, price FROM products;", function(err, result, fields) {
+        con.query("SELECT product_name, price, department_name FROM products;", function(err, result, fields) {
           if (err) throw err;
           var choiceArr = [];
           for (var i = 0; i < result.length; i++) {

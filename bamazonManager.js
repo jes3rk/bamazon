@@ -2,6 +2,7 @@
 var inquirer = require("inquirer");
 var mysql = require("mysql");
 var password = require("./password.js");
+require("console.table");
 
 // Make the connection
 var con = mysql.createConnection({
@@ -51,9 +52,7 @@ function mainMenu() {
           case "View Products for Sale":
             con.query("SELECT * FROM products;", function(err, result, fields) {
               if (err) throw err;
-              for (var i = 0; i < result.length; i++) {
-                console.log(result[i]);
-              };
+              console.table("Current Products", result);
               returnMain();
             });
             break;
@@ -61,9 +60,7 @@ function mainMenu() {
             con.query("SELECT * FROM products WHERE stock_quantity <= 100;", function(err, result, fields) {
               if (err) throw err;
               if (result.length > 1) {
-                for (var i = 0; i < result.length; i++) {
-                  console.log(result[i]);
-                };
+                console.table("Products with Low Inventory", result);
               } else {
                 console.log("There are no products with low inventory.");
                 returnMain();
