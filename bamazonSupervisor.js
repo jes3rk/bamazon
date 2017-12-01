@@ -19,6 +19,24 @@ con.connect(function(err) {
   console.log("Connected!");
 });
 
+function returnMain() {
+  inquirer
+    .prompt([
+      {
+        type: "confirm",
+        message: "Would you like to return to the main menu?",
+        default: "true",
+        name: "menu_confirm"
+      }
+    ]).then(function(inquirerResponse) {
+      if (inquirerResponse.menu_confirm) {
+        mainMenu();
+      } else {
+        console.log("Bye bye!");
+      };
+    });
+};
+
 function mainMenu() {
   inquirer
     .prompt([
@@ -35,6 +53,7 @@ function mainMenu() {
             // console.log(result);
             if (err) throw err;
             console.table("Department Sales", result);
+            returnMain();
           });
           break;
         case "Create New Department":
@@ -56,13 +75,60 @@ function mainMenu() {
                 name: "dept_new"
               }
             ]).then(function(inquirerResponse) {
-              var name = '"' + inquirerResponse.dept_name + '"';
+              var raw_name = inquirerResponse.dept_name;
+              var name = '"' + raw_name + '"';
               var over = parseInt(inquirerResponse.dept_over);
 
-              con.query("INSERT INTO departments VALUE (" + name + ", " + over + ");", function(err, result, fields) {
+              con.query("INSERT INTO departments (department_name, over_head_costs) VALUE (" + name + ", " + over + ");", function(err, result, fields) {
                 if (err) throw err;
-              })
-            })
+              });
+
+              if (inquirerResponse.dept_new) {
+                inquirer
+                  .prompt([
+                    {
+                      type: "input",
+                      message: "What is the name of the item you would like to add to the " + raw_name + " department?",
+                      name: "new_name"
+                    },
+                    {
+                      type: "input",
+                      message: "How many units of this product should we intially stock?",
+                      name: "new_quantity"
+                    },
+                    {
+                      type: "input",
+                      message: "How much should we sell this product for?",
+                      name: "new_price"
+                    }
+                  ]).then(function(inquirerResponse) {
+                    var new_name = '"' + inquirerResponse.new_name + '"';
+                    var new_quantity = parseInt(inquirerResponse.new_quantity);
+                    var new_price = parseFloat(inquirerResponse.new_price);
+
+                    inquirer
+                      .prompt([
+                        {
+                          type: "confirm",
+                          message: "Add " + inquirerResponse.new_quantity + " units of " + inquirerResponse.new_name + " for the " + raw_name + " department to sell at $" + inquirerResponse.new_price + " per unit?",
+                          default: "true",
+                          name: "new_confirm"
+                        }
+                      ]).then(function(inquirerResponse) {
+                        if (inquirerResponse.new_confirm) {
+                          var sql = "INSERT INTO products (product_name, department_name, price, stock_quantity) VALUE (" + new_name + ", " + name + ", " + new_price + ", " + new_quantity + ");";
+                          // console.log(sql);
+                          con.query(sql, function(err, result, fields) {
+                            console.log("New product added!");
+                            returnMain();
+                          });
+                        };
+                      });
+                  });
+              } else {
+                console.log("Department has been created.");
+              };
+            });
           break;
         default:
             console.log("Sorry, I didn't catch that.");
